@@ -5,8 +5,8 @@ import edu.princeton.cs.algs4.*;
 public class MaxStack<T extends Comparable<T>> extends Stack<T> {
 
     //Stacks
-    Stack<T> main;
-    Stack<T> max;
+    private Stack<T> main;
+    private Stack<T> max;
 
     //Constructor
     public MaxStack() {
