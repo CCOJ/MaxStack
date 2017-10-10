@@ -1,13 +1,16 @@
 //Randy Nguyen
-//Stack that allows us to quickly find the maximum element
+//Uses 2 stacks that allows us to quickly find the maximum element
 import edu.princeton.cs.algs4.*;
 
 public class MaxStack<T extends Comparable<T>> {
 
-    //Variables
+    //Main stack
     private T[] stack;
     private int pointer;
-    private T max;
+
+    //Keeps track of max values in a stack
+    private T[] max;
+    private int maxPointer;
 
     //Auxiliary method
     private void doubleStack() {
@@ -19,13 +22,30 @@ public class MaxStack<T extends Comparable<T>> {
             newStack[i] = stack[i];
         }
 
-        //Set stack to newStack
+        //Replace stack
         stack = newStack;
+    }
+
+    private void doubleMax() {
+        //Double size
+        T[] newMax = (T[]) new Comparable[max.length*2];
+
+        //Copy max to newMax
+        for(int i = 0; i < max.length; i++) {
+            newMax[i] = max[i];
+        }
+
+        //Replace max
+        max = newMax;
     }
 
     //Constructor
     public MaxStack(){
         stack = (T[]) new Comparable[2];
+        pointer = 0;
+
+        max = (T[]) new Comparable[2];
+        maxPointer = 0;
     }
 
 
@@ -36,10 +56,16 @@ public class MaxStack<T extends Comparable<T>> {
             stack[pointer++] = x;
 
             //Replace max when there is a greater x value
-            if (max == null || x.compareTo(max) > 0)
-                max = x;
+            if (max[0] == null || x.compareTo(getMax()) >= 0)
+
+                if (maxPointer < max.length) {
+                    max[maxPointer++] = x;
+                } else {
+                    doubleMax();
+                    max[maxPointer++] = x;
+                }
         } else { //Otherwise, it'll double the stack size then add
-            doubleStack();;
+            doubleStack();
             push(x);
         }
     }
@@ -58,8 +84,9 @@ public class MaxStack<T extends Comparable<T>> {
         stack[pointer] = null;
 
         //Determines if max needs to be changed
-        if (removed.compareTo(max) == 0) {
-
+        if (removed.compareTo(getMax()) == 0 && maxPointer > 0) {
+            //Old max gets removed, and goes to next max
+            max[maxPointer--] = null;
         }
         //Output
         return removed;
@@ -67,7 +94,7 @@ public class MaxStack<T extends Comparable<T>> {
 
     //Returns max value
     public T getMax() {
-        return max;
+        return max[maxPointer-1];
     }
 
     public static void main(String[] args) {
